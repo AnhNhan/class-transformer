@@ -1,3 +1,27 @@
+# Fork
+
+Enables lazy spec of @Type discriminator, useful for circular dependencies.
+
+Example:
+
+```typescript
+class Person {
+  public name: string;
+
+  @Type(() => Hobby, {
+    discriminator: () => ({
+      property: '__type',
+      subTypes: [
+        { value: Sports, name: 'sports' },
+        { value: Relaxing, name: 'relax' },
+        { value: Programming, name: 'program' },
+      ],
+    }),
+  })
+  public hobbies: any[];
+}
+```
+
 # class-transformer
 
 ![Build Status](https://github.com/typestack/class-transformer/workflows/CI/badge.svg)
