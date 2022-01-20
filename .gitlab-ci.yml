@@ -1,0 +1,24 @@
+stages:
+  - publish
+
+image: node:16-alpine
+
+publish:
+  stage: publish
+  before_script:
+    - apk add jq
+  script:
+    - npm ci --ignore-scripts
+    - npm run prettier:check
+    - npm run lint:check
+    - npm run test:ci
+    - npm run build:es2015
+    - npm run build:esm5
+    - npm run build:cjs
+    - npm run build:umd
+    - npm run build:types
+    - cp LICENSE build/LICENSE
+    - cp README.md build/README.md
+    - jq 'del(.devDependencies) | del(.scripts)' package.json > build/package.json
+    - echo "//${CI_SERVER_HOST}/api/v4/projects/${CI_PROJECT_ID}/packages/npm/:_authToken=${CI_JOB_TOKEN}">>.npmrc
+    - npm publish ./build
